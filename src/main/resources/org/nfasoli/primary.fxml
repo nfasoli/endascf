@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import java.lang.Double?>
+<?import org.controlsfx.control.SearchableComboBox?>
+
+
+<GridPane xmlns="http://javafx.com/javafx/8.0.171" fx:id="root"
+   xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nfasoli.Controller" stylesheets="@stylesheet.css" gridLinesVisible="false" alignment="center" hgap="10" vgap="10" minHeight="640" minWidth="480" maxHeight="Infinity" maxWidth="Infinity" prefHeight="1024.0" prefWidth="768.0">
+   <VBox fx:id="d1" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4" styleClass="cf">
+      <TextField fx:id="codiceFiscale" promptText="CODICE FISCALE"/>
+   </VBox>
+      <ComboBox fx:id="nome" editable="true" promptText="Nome" disable="true" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2" />
+      <ComboBox fx:id="cognome" editable="true" promptText="Cognome" disable="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2" />
+   <!-- <Label fx:id="nome" text="Nome" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="1" /> -->
+   <!-- <Label fx:id="cognome" text="Cognome" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.columnSpan="1"/> -->
+   <DatePicker fx:id="dataDiNascita" disable="true" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="1"/>
+   <ComboBox fx:id="sesso" promptText="Sesso" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="1">
+      <items>
+         <FXCollections fx:factory="observableArrayList">
+            <String fx:value="M" />
+            <String fx:value="F" />
+         </FXCollections>
+      </items>
+   </ComboBox>
+   <Label fx:id="comuneDiNascita" text="Comune di Nascita" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.columnSpan="1"/>
+   <!-- <VBox GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="3" styleClass="tessera" >
+      <TextField fx:id="tessera" disable="true" promptText="Tessera" />
+   </VBox> -->
+   <TextField fx:id="indirizzo" disable="true" promptText="Indirizzo" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="1"/>
+   <TextField fx:id="comune" disable="true" promptText="Comune" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.columnSpan="1"/>
+   <TextField fx:id="CAP" disable="true" promptText="CAP" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.columnSpan="1"/>
+   <TextField fx:id="provincia" disable="true" promptText="Provincia" GridPane.columnIndex="3" GridPane.rowIndex="4" GridPane.columnSpan="1"/>
+   <TextField fx:id="email" disable="true" promptText="email" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="1"/>
+   <TextField fx:id="telefono" disable="true" promptText="Telefono" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.columnSpan="1"/>
+   <TextField fx:id="cellulare" disable="true" promptText="Cellulare" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.columnSpan="1"/>
+   <VBox GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2" >
+      <Button fx:id="fileChooser" text="Apri Excel" onAction="#onOpen" styleClass="salva"/>
+      <Label fx:id="selFile" text=""/>
+   </VBox>
+   <VBox GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.columnSpan="2" styleClass="salva">
+      <Button fx:id="salva" disable="true" text="Salva" prefHeight="Infinity" prefWidth="Infinity" onAction="#onSave"/>
+   </VBox>
+   <columnConstraints>
+      <ColumnConstraints percentWidth="30"/>
+      <ColumnConstraints percentWidth="30"/>
+      <ColumnConstraints percentWidth="25"/>
+      <ColumnConstraints percentWidth="15"/>
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints percentHeight="20"/>
+      <RowConstraints percentHeight="10"/>
+      <RowConstraints percentHeight="10"/>
+      <RowConstraints percentHeight="10"/>
+      <RowConstraints percentHeight="10"/>
+      <RowConstraints percentHeight="10"/>
+      <RowConstraints percentHeight="30"/>
+   </rowConstraints>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>

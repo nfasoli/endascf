@@ -1,0 +1,42 @@
+<Configuration status="debug">
+	<Properties>
+		<Property name="log-path">./logs</Property>
+	</Properties>
+
+    <Appenders>
+			<RollingFile name="file-log" fileName="${log-path}/endas.log" filePattern="${log-path}/endas-%d{dd-MM-yyyy}.log.gz">
+			<PatternLayout>
+				<pattern>%d{DEFAULT} [%M:%L] %-5level %logger{36} - %msg%n
+				</pattern>
+			</PatternLayout>
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+			<DefaultRolloverStrategy>
+				<!-- * only files in the log folder, no sub folders * only rolled over 
+					log files (name match) * only files that are 4 days old or older -->
+				<Delete basePath="${log-path}" maxDepth="2">
+					<IfLastModified age="15d" />
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+    	<!-- Console appender configuration -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+    	<!-- Root logger referring to console appender -->
+		<Root level="debug">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file-log" />
+		</Root>
+        <Logger name="org.nfasoli.endascf" level="debug">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="file-log"  />
+        </Logger>
+    </Loggers>
+</Configuration>

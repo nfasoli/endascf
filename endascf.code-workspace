@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive",
+		"SAP HANA Database Explorer.displaySapWebAnalyticsStartupNotification": false,
+		"SAP HANA Database Explorer.enableSapWebAnalytics": false
+	}
+}
