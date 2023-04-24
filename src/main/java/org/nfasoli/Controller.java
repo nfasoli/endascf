@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -21,6 +20,8 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -51,6 +52,7 @@ public class Controller implements Initializable {
     private values values = null;
     private File fileName = null;
     private final static int cf_len = 16;
+    Default d = new Default();
 
     @FXML
     private Button salva;
@@ -236,6 +238,20 @@ public class Controller implements Initializable {
                 Platform.exit();
                 System.exit(2);
             }
+
+            XmlMapper mapper = new XmlMapper();
+            
+            try {
+                d = mapper.readValue(new File("./default.xml"), Default.class);
+            } catch (IOException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Eccezione");
+                alert.setHeaderText("Eccezione non gestita");
+                alert.setContentText(e.toString());
+
+                alert.showAndWait();
+
+            }
         }
     }
 
@@ -291,7 +307,7 @@ public class Controller implements Initializable {
         r.createCell(3).setCellValue((String) sesso.getValue());
         r.createCell(4).setCellValue(comuneDiNascita.getText());
         r.createCell(5).setCellValue("");
-        r.createCell(6).setCellValue(""); //tessera.getText());
+        r.createCell(6).setCellValue(""); // tessera.getText());
         r.createCell(7).setCellValue(indirizzo.getText());
         r.createCell(8).setCellValue(CAP.getText());
         r.createCell(9).setCellValue(comune.getText());
@@ -395,7 +411,7 @@ public class Controller implements Initializable {
     }
 
     private void clearText() {
-        //tessera.setText("");
+        // tessera.setText("");
         indirizzo.setText("");
         CAP.setText("");
         comune.setText("");
@@ -415,11 +431,11 @@ public class Controller implements Initializable {
                 "[A-Z][A-Z][A-Z][A-Z][A-Z][A-Z][0-9][0-9][A-Z][0-9][0-9][A-Z][0-9][0-9][0-9][A-Z0-9]",
                 "");
 
-        if (fileName != null && codiceFiscale.getText().length() >0 && r.length() == 0) {
+        if (fileName != null && codiceFiscale.getText().length() > 0 && r.length() == 0) {
             nome.setDisable(false);
             cognome.setDisable(false);
             salva.setDisable(false);
-           // tessera.setDisable(false);
+            // tessera.setDisable(false);
             indirizzo.setDisable(false);
             CAP.setDisable(false);
             comune.setDisable(false);
@@ -431,7 +447,7 @@ public class Controller implements Initializable {
             nome.setDisable(true);
             cognome.setDisable(true);
             salva.setDisable(true);
-         //   tessera.setDisable(true);
+            // tessera.setDisable(true);
             indirizzo.setDisable(true);
             CAP.setDisable(true);
             comune.setDisable(true);
@@ -443,7 +459,7 @@ public class Controller implements Initializable {
             nome.setDisable(true);
             cognome.setDisable(true);
             salva.setDisable(true);
-           // tessera.setDisable(true);
+            // tessera.setDisable(true);
             indirizzo.setDisable(true);
             CAP.setDisable(true);
             comune.setDisable(true);
@@ -455,7 +471,7 @@ public class Controller implements Initializable {
             nome.setDisable(true);
             cognome.setDisable(true);
             salva.setDisable(true);
-         //   tessera.setDisable(true);
+            // tessera.setDisable(true);
             indirizzo.setDisable(true);
             CAP.setDisable(true);
             comune.setDisable(true);
@@ -500,18 +516,17 @@ public class Controller implements Initializable {
         ObservableList<String> lista_cognomi = FXCollections.observableArrayList();
         for (String c : cognomi.values()) {
             if (cf.substring(0, 3).compareTo(lastnameCode(c)) == 0) {
-               // cognome.setText(c);
+                // cognome.setText(c);
                 found = true;
                 lista_cognomi.add(c);
             }
         }
         if (found == false)
             cognome.setValue(cf.substring(0, 3));
-            else
-            {
-                nome.setValue(lista_cognomi.get(0));
-                nome.setItems(lista_cognomi);
-            }
+        else {
+            nome.setValue(lista_cognomi.get(0));
+            nome.setItems(lista_cognomi);
+        }
         found = false;
         ObservableList<String> lista_nomi = FXCollections.observableArrayList();
         if (genere == 0) {
@@ -534,14 +549,21 @@ public class Controller implements Initializable {
 
         if (found == false)
             nome.setValue(cf.substring(3, 6));
-        else
-        {
+        else {
             nome.setValue(lista_nomi.get(0));
             nome.setItems(lista_nomi);
         }
         dataDiNascita.setValue(LocalDate.of(1900 + Integer.parseInt(cf.substring(6, 8)),
                 values.monthCodes.get(cf.substring(8, 9)), day));
         comuneDiNascita.setText(birthPlace.get(cf.substring(11, 15)));
+        indirizzo.setText(d.indirizzo);
+        CAP.setText(d.CAP);
+        comune.setText(d.comune);
+        provincia.setText(d.provincia);
+        email.setText(d.email);
+        telefono.setText(d.telefono);
+        cellulare.setText(d.cellulare);
+
         // provinciaDiNascita.Text = "";
 
     }
