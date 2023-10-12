@@ -1,7 +1,5 @@
 package org.nfasoli;
 
-import java.io.File;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class Default {
     public String indirizzo;

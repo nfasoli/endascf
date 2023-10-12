@@ -7,6 +7,8 @@
 	"settings": {
 		"java.configuration.updateBuildConfiguration": "automatic",
 		"SAP HANA Database Explorer.displaySapWebAnalyticsStartupNotification": false,
-		"SAP HANA Database Explorer.enableSapWebAnalytics": false
+		"SAP HANA Database Explorer.enableSapWebAnalytics": false,
+		"maven.view": "hierarchical",
+		"java.debug.settings.onBuildFailureProceed": true
 	}
 }

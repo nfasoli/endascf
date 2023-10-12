@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <default>
-    <indirizzo>Lokesh</indirizzo>
-    <comune>BO</comune>
-    <CAP>40100</CAP>
-    <provincia>BO</provincia>
-    <email>endas</email>
-    <telefono>051344556</telefono>
+    <indirizzo></indirizzo>
+    <comune></comune>
+    <CAP></CAP>
+    <provincia></provincia>
+    <email></email>
+    <telefono></telefono>
     <cellulare></cellulare>
 </default>

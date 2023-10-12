@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -145,7 +146,7 @@ public class Controller implements Initializable {
             dataDiNascita.setValue(LocalDate.now());
             values = new values();
             codiceFiscale.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue.length() > cf_len) {
+                if (newValue != null && newValue.length() > cf_len) {
                     newValue = newValue.substring(0, cf_len);
                     codiceFiscale.setText(newValue);
                 }
@@ -240,7 +241,7 @@ public class Controller implements Initializable {
             }
 
             XmlMapper mapper = new XmlMapper();
-            
+
             try {
                 d = mapper.readValue(new File("./default.xml"), Default.class);
             } catch (IOException e) {
@@ -281,7 +282,7 @@ public class Controller implements Initializable {
         numericStyle.setDataFormat(fmt.getFormat("0"));
 
         CellStyle dateStyle = wb.createCellStyle();
-        dateStyle.setDataFormat(fmt.getFormat("d-mmm-yy"));
+        dateStyle.setDataFormat(fmt.getFormat("dd/MM/yyyy"));
         sheet.setDefaultColumnStyle(0, textStyle);
         sheet.setDefaultColumnStyle(1, textStyle);
         sheet.setDefaultColumnStyle(2, dateStyle);
@@ -372,42 +373,117 @@ public class Controller implements Initializable {
             try {
                 if (wb != null) {
                     wb.close();
-                    return;
                 }
             } catch (IOException e) {
                 log.info(e);
             }
         }
-        // non esiste, quindi lo creo exnovo
-        try {
-            wb = new XSSFWorkbook();
-            Sheet sheet = wb.createSheet("Foglio 1");
-            createHeader(wb, sheet);
-            addRowToSheet(sheet);
+        // non esiste, quindi lo creo ex novo
+        if (wb == null)
+            try {
+                wb = new XSSFWorkbook();
+                Sheet sheet = wb.createSheet("Foglio 1");
+                createHeader(wb, sheet);
+                addRowToSheet(sheet);
 
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            wb.write(outputStream);
-            outputStream.close();
-        } catch (IOException e) {
+                FileOutputStream outputStream = new FileOutputStream(fileName);
+                wb.write(outputStream);
+                outputStream.close();
+            } catch (IOException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Eccezione");
+                alert.setHeaderText("Eccezione non gestita");
+                alert.setContentText(e.toString());
+
+                alert.showAndWait();
+                log.info(e);
+            } finally {
+                manageEnableDisable();
+
+                try {
+                    if (wb != null) {
+                        wb.close();
+                    }
+                } catch (IOException e) {
+                    log.info(e);
+                }
+            }
+
+        // salvo il cognome
+        log.info(cognome.getValue().toUpperCase());
+        Boolean exists = cognomi.containsValue(cognome.getValue().toUpperCase());
+        log.info(exists);
+
+        if (!exists) {
+            // add line id + 1 and cognome.getValue()
+            int max = Collections.max(cognomi.keySet());
+            try {
+                FileOutputStream fos = new FileOutputStream("cognomi.csv", true);
+                fos.write(("" + (max + 1) + ";" + cognome.getValue().toUpperCase() + "\n").getBytes());
+                fos.close();
+            } catch (IOException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Eccezione");
+                alert.setHeaderText("Eccezione non gestita");
+                alert.setContentText(e.toString());
+
+                alert.showAndWait();
+            }
+        }
+        // salvo il nome()
+        log.info(nome.getValue().toUpperCase());
+        int genere = (sesso.getValue().compareTo("M") == 0) ? 0 : 1;
+        if (genere == 0) {
+            exists = nomi_maschili.containsValue(nome.getValue().toUpperCase());
+            log.info(exists);
+
+            if (!exists) {
+                // add line id + 1 and cognome.getValue()
+                int max = Collections.max(nomi_maschili.keySet());
+                try {
+                    FileOutputStream fos = new FileOutputStream("nomi_maschi.csv", true);
+                    fos.write(("" + (max + 1) + ";" + nome.getValue().toUpperCase() + "\n").getBytes());
+                    fos.close();
+                } catch (IOException e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Eccezione");
+                    alert.setHeaderText("Eccezione non gestita");
+                    alert.setContentText(e.toString());
+
+                    alert.showAndWait();
+                }
+            }
+        } else if (genere == 1) {
+            exists = nomi_femminili.containsValue(nome.getValue().toUpperCase());
+            log.info(exists);
+
+            if (!exists) {
+                // add line id + 1 and cognome.getValue()
+                int max = Collections.max(nomi_femminili.keySet());
+                try {
+                    FileOutputStream fos = new FileOutputStream("nomi_femmine.csv", true);
+                    fos.write(("" + (max + 1) + ";" + nome.getValue().toUpperCase() + "\n").getBytes());
+                    fos.close();
+                } catch (IOException e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Eccezione");
+                    alert.setHeaderText("Eccezione non gestita");
+                    alert.setContentText(e.toString());
+
+                    alert.showAndWait();
+                }
+            }
+        } else {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Eccezione");
-            alert.setHeaderText("Eccezione non gestita");
-            alert.setContentText(e.toString());
+            alert.setHeaderText("Genere non definito: ");
+            alert.setContentText("genere non definito: " + genere);
 
             alert.showAndWait();
-            log.info(e);
-        } finally {
-            manageEnableDisable();
-
-            try {
-                if (wb != null) {
-                    wb.close();
-                    return;
-                }
-            } catch (IOException e) {
-                log.info(e);
-            }
         }
+
+        // resetto i campi
+        codiceFiscale.setText(null);
     }
 
     private void clearText() {
@@ -427,6 +503,22 @@ public class Controller implements Initializable {
 
     private void manageEnableDisable() {
 
+        if (codiceFiscale.getText() == null) {
+            nome.setDisable(true);
+            cognome.setDisable(true);
+            salva.setDisable(true);
+            // tessera.setDisable(true);
+            dataDiNascita.setDisable(true);
+            indirizzo.setDisable(true);
+            CAP.setDisable(true);
+            comune.setDisable(true);
+            provincia.setDisable(true);
+            email.setDisable(true);
+            telefono.setDisable(true);
+            cellulare.setDisable(true);
+            return;
+        }
+
         String r = codiceFiscale.getText().replaceAll(
                 "[A-Z][A-Z][A-Z][A-Z][A-Z][A-Z][0-9][0-9][A-Z][0-9][0-9][A-Z][0-9][0-9][0-9][A-Z0-9]",
                 "");
@@ -434,6 +526,8 @@ public class Controller implements Initializable {
         if (fileName != null && codiceFiscale.getText().length() > 0 && r.length() == 0) {
             nome.setDisable(false);
             cognome.setDisable(false);
+                        dataDiNascita.setDisable(false);
+
             salva.setDisable(false);
             // tessera.setDisable(false);
             indirizzo.setDisable(false);
@@ -446,6 +540,8 @@ public class Controller implements Initializable {
         } else if (fileName != null && r.length() > 0) {
             nome.setDisable(true);
             cognome.setDisable(true);
+                        dataDiNascita.setDisable(true);
+
             salva.setDisable(true);
             // tessera.setDisable(true);
             indirizzo.setDisable(true);
@@ -459,6 +555,7 @@ public class Controller implements Initializable {
             nome.setDisable(true);
             cognome.setDisable(true);
             salva.setDisable(true);
+                        dataDiNascita.setDisable(true);
             // tessera.setDisable(true);
             indirizzo.setDisable(true);
             CAP.setDisable(true);
@@ -471,6 +568,7 @@ public class Controller implements Initializable {
             nome.setDisable(true);
             cognome.setDisable(true);
             salva.setDisable(true);
+                        dataDiNascita.setDisable(true);
             // tessera.setDisable(true);
             indirizzo.setDisable(true);
             CAP.setDisable(true);
@@ -489,6 +587,11 @@ public class Controller implements Initializable {
         // 2 attiva salva
         // altrimenti
         // 2 disattiva salva
+        if (codiceFiscale.getText() == null) {
+            manageEnableDisable();
+            return;
+        }
+
         String cf = codiceFiscale.getText().toUpperCase();
         String r = cf.replaceAll("[A-Z][A-Z][A-Z][A-Z][A-Z][A-Z][0-9][0-9][A-Z][0-9][0-9][A-Z][0-9][0-9][0-9][A-Z0-9]",
                 "");
@@ -523,9 +626,10 @@ public class Controller implements Initializable {
         }
         if (found == false)
             cognome.setValue(cf.substring(0, 3));
+        // log.info(cf.substring(0, 3));
         else {
-            nome.setValue(lista_cognomi.get(0));
-            nome.setItems(lista_cognomi);
+            cognome.setValue(lista_cognomi.get(0));
+            cognome.setItems(lista_cognomi);
         }
         found = false;
         ObservableList<String> lista_nomi = FXCollections.observableArrayList();
@@ -540,6 +644,8 @@ public class Controller implements Initializable {
             }
         } else {
             for (String c : nomi_femminili.values()) {
+                log.info(firstnameCode(c));
+                log.info(cf.substring(3, 6));
                 if (cf.substring(3, 6).compareTo(firstnameCode(c)) == 0) {
                     found = true;
                     lista_nomi.add(c);
@@ -553,7 +659,13 @@ public class Controller implements Initializable {
             nome.setValue(lista_nomi.get(0));
             nome.setItems(lista_nomi);
         }
-        dataDiNascita.setValue(LocalDate.of(1900 + Integer.parseInt(cf.substring(6, 8)),
+        int start_year = Integer.parseInt(cf.substring(6, 8));
+        if(start_year > 20)
+            start_year = 1900;
+        else 
+            start_year = 2000;
+            
+        dataDiNascita.setValue(LocalDate.of(start_year + Integer.parseInt(cf.substring(6, 8)),
                 values.monthCodes.get(cf.substring(8, 9)), day));
         comuneDiNascita.setText(birthPlace.get(cf.substring(11, 15)));
         indirizzo.setText(d.indirizzo);
